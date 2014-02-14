@@ -1,0 +1,106 @@
+<title>Quick Finder</title>
+    <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=weather"></script>  
+
+    <script type="text/javascript">
+           
+var map;
+
+    function CalculateRoute()
+        {
+        	var map_name = document.getElementById('map');
+        var map_options = {
+          center: new google.maps.LatLng(-49.397, 91.644),
+          zoom: 12,
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        }
+        map = new google.maps.Map(map_name, map_options)
+        var start = document.getElementById('Source').value;
+  var end = document.getElementById('Destination').value;
+
+var displayroute;
+var mapservice = new google.maps.DirectionsService();
+displayroute = new google.maps.DirectionsRenderer();
+displayroute.setMap(map);
+
+  var request = {
+      origin:start,
+      destination:end,
+      travelMode: google.maps.TravelMode.DRIVING
+  };
+  mapservice.route(request, function(response, status) {
+    if (status == google.maps.DirectionsStatus.OK) {
+      displayroute.setDirections(response);
+    }
+  });   
+ var coordinator = new google.maps.Geocoder();
+var mapOptions_weather = {
+    zoom: 8,
+    center: new google.maps.LatLng(37.09024, -95.712891)
+  };
+coordinator.geocode( { 'address': end}, function(locations, status) {
+      if (status == google.maps.GeocoderStatus.OK) {
+        weathersource.setCenter(locations[0].geometry.location);
+        var marker = new google.maps.Marker({
+            map: weathersource,
+            position: locations[0].geometry.location
+        });
+      }
+    });
+        
+        var pagelocation=document.getElementById('weathersource');
+  var weathersource = new google.maps.Map(pagelocation,
+      mapOptions_weather);
+
+  var output = new google.maps.weather.WeatherLayer({
+    temperatureUnits: google.maps.weather.TemperatureUnit.FAHRENHEIT
+  });
+  output.setMap(weathersource);
+
+  var cloudconditions = new google.maps.weather.CloudLayer();
+  cloudconditions.setMap(weathersource);
+     
+        }    
+    </script>
+
+     <style>
+      #map {
+        width: 500px;
+        height: 400px;
+      }
+    </style>
+<style>
+    #weathersource{
+      width: 500px;
+        height: 400px;
+    }
+</style>
+
+  
+  <body>
+    <p>
+    <h1>
+        <centre>Find your Destination and Weather Report of the Destination.</centre>
+    </h1>
+    </p>
+    <form id="Travel Details" name="Travel Details">
+      <label>Source Address:</label>
+      <input type="text" id="Source" name="Source" placeholder="Source Address" size="50" />
+        <br />
+      <label >Destination Address:</label>
+        <input type="text" id="Destination" name="Destination" placeholder="Destination Address" size="50" />
+      <br />
+</form>
+      <button onclick="CalculateRoute()">Find Route</button> 
+            <div id="map"></div>
+      <p>Weather at your destination place</p>
+      <br/>
+      <div id="weathersource"></div>
+      
+      
+  </body>
+
+
+
+
+
